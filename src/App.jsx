@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { EmployeeProvider } from './context/EmployeeContext';
+import { EmployeeProvider } from './context/EmployeeProvider';
 import EmployeeList from './components/EmployeeList';
 import AddEmployee from './pages/AddEmployee';
 import EditEmployee from './pages/EditEmployee';
