@@ -1,27 +1,48 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { EmployeeContext } from './EmployeeContext';
 
-export const EmployeeProvider = ({ children }) => {
-  const [employees, setEmployees] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john@example.com',
-      position: 'Developer',
-      department: 'IT',
-      salary: 50000,
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane@example.com',
-      position: 'Manager',
-      department: 'HR',
-      salary: 60000,
-    },
-  ]);
+const EMPLOYEES_STORAGE_KEY = 'employees';
+const NEXT_ID_STORAGE_KEY = 'nextId';
 
-  const [nextId, setNextId] = useState(3);
+const defaultEmployees = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john@example.com',
+    position: 'Developer',
+    department: 'IT',
+    salary: 50000,
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    position: 'Manager',
+    department: 'HR',
+    salary: 60000,
+  },
+];
+
+export const EmployeeProvider = ({ children }) => {
+  const [employees, setEmployees] = useState(() => {
+    const stored = localStorage.getItem(EMPLOYEES_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : defaultEmployees;
+  });
+
+  const [nextId, setNextId] = useState(() => {
+    const stored = localStorage.getItem(NEXT_ID_STORAGE_KEY);
+    return stored ? parseInt(stored, 10) : 3;
+  });
+
+  // Save employees to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(EMPLOYEES_STORAGE_KEY, JSON.stringify(employees));
+  }, [employees]);
+
+  // Save nextId to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(NEXT_ID_STORAGE_KEY, nextId.toString());
+  }, [nextId]);
 
   // Add new employee
   const addEmployee = useCallback((employeeData) => {
